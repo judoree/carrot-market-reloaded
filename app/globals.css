@@ -15,7 +15,7 @@
 }
 
 @layer components {
-  .btn {
-    @apply w-full bg-black h-10 text-white rounded-full mt-ktwiz;
+  .primary-btn {
+    @apply w-full bg-orange-600 text-white  font-medium  rounded-md text-center hover:bg-orange-400 transition-colors;
   }
 }
