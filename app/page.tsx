@@ -1,13 +1,27 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
-    <main className="bg-gray-400 h-screen flex items-center justify-center p-5 sm:bg-red-200  md:bg-green-200 lg:bg-cyan-300 xl:bg-orange-300">
-      <div className="bg-white shadow-lg p-5 rounded-3xl w-full max-w-screen-sm flex flex-col gap-4">
-        <div className="group flex flex-col">
-          <input className="bg-gray-100 w-full rounded-r-sexy-name mt-ktwiz " placeholder="Write Email" />
-          <span className="group-focus-within:block hidden">Make sure it is a valid email....</span>
-          <button className="btn">Sub mit</button>
+    <div className="flex flex-col items-center justify-between min-h-screen p-6">
+      <div className="my-auto *:font-medium flex flex-col items-center gap-2">
+        <span className="text-9xl">🥕</span>
+        <h1 className="text-4xl">당근</h1>
+        <h2 className="text-2xl">당근 마켓에 어서오세요!</h2>
+      </div>
+      <div className="flex flex-col items-center w-full">
+        <Link
+          href="/create-account"
+          className="w-full bg-orange-600 text-white text-lg font-medium py-2.5 rounded-md text-center hover:bg-orange-400 transition-colors "
+        >
+          시작하기
+        </Link>
+        <div className="flex gap-3">
+          <span>이미 계정이 있나요?</span>
+          <Link className="hover:underline underline-offset-4" href="/login">
+            로그인
+          </Link>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
