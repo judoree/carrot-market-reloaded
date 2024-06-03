@@ -1,6 +1,8 @@
 "use server";
 import { z } from "zod";
 
+const passwordRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*?[#?!@$%^&*-]).+$/);
+
 function checkUsername(username: string) {
   return !username.includes("potato");
 }
@@ -16,14 +18,17 @@ const formSchema = z
         required_error: "Where is my username???",
       })
       .min(3, "짧아")
-      .max(10, "길어")
-      .refine(checkUsername, "No potato allowed"),
+      .max(40, "길어")
+      .toLowerCase()
+      .trim()
+      .transform((username) => `🍬${username}`)
+      .refine(checkUsername, "No"),
     email: z.string().email(),
     password: z
       .string()
-      .min(10, "비밀번호 가 너무 짧습니다 다시 설정 해주세요")
-      .max(15, "비밀번호 가 너무 길어요 다시 설정 해주세요"),
-    confirm_password: z.string().min(10),
+      .min(4)
+      .regex(passwordRegex, "A password must have lowercase , UPPERCASE , a number and special characters"),
+    confirm_password: z.string().min(4),
   })
   .refine(checkPasswords, { message: "Both passwords should be the same!", path: ["confirm_password"] });
 
@@ -37,5 +42,7 @@ export async function createAccount(prevState: any, formData: FormData) {
   const result = formSchema.safeParse(data);
   if (!result.success) {
     return result.error.flatten();
+  } else {
+    console.log(result.data);
   }
 }
