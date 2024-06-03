@@ -1,8 +1,6 @@
 "use server";
 
-export async function handlForm(prevState: any, formData: FormData) {
-  console.log(prevState);
-  await new Promise((resolve) => setTimeout(resolve, 3000));
+export async function handleForm(prevState: any, formData: FormData) {
   return {
     errors: ["worng password", "password too short"],
   };
