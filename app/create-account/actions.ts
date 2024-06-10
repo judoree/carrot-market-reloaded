@@ -1,5 +1,7 @@
 "use server";
 import { PASSWORD_MIN_LENGTH, PASSWORD_REGEX, PASSWORD_REGEX_ERROR } from "@/lib/constants";
+import db from "@/lib/db";
+import { cookies } from "next/headers";
 import { z } from "zod";
 
 function checkUsername(username: string) {
@@ -8,6 +10,35 @@ function checkUsername(username: string) {
 
 const checkPasswords = ({ password, confirm_password }: { password: string; confirm_password: string }) =>
   password === confirm_password;
+
+const checkUniqueUsername = async (username: string) => {
+  const user = await db.user.findUnique({
+    where: {
+      username,
+    },
+    select: {
+      id: true,
+    },
+  });
+  // if (user) {
+  //   return false;
+  // } else {
+  //   return true;
+  // }
+  return !Boolean(user);
+};
+
+const checkUniqueEmail = async (email: string) => {
+  const user = await db.user.findUnique({
+    where: {
+      email,
+    },
+    select: {
+      id: true,
+    },
+  });
+  return Boolean(user) === false;
+};
 
 const formSchema = z
   .object({
@@ -18,10 +49,11 @@ const formSchema = z
       })
       .toLowerCase()
       .trim()
-      .transform((username) => `🍬${username}`)
-      .refine(checkUsername, "No"),
-    email: z.string().email(),
-    password: z.string().min(PASSWORD_MIN_LENGTH).regex(PASSWORD_REGEX, PASSWORD_REGEX_ERROR),
+      // .transform((username) => `🍬${username}`)
+      .refine(checkUsername, "No")
+      .refine(checkUniqueUsername, "This username is alredy raken"),
+    email: z.string().email().refine(checkUniqueEmail, "There is an account alreay registered with that email"),
+    password: z.string().min(PASSWORD_MIN_LENGTH), //.regex(PASSWORD_REGEX, PASSWORD_REGEX_ERROR),
     confirm_password: z.string().min(PASSWORD_MIN_LENGTH),
   })
   .refine(checkPasswords, { message: "Both passwords should be the same!", path: ["confirm_password"] });
@@ -33,10 +65,13 @@ export async function createAccount(prevState: any, formData: FormData) {
     password: formData.get("password"),
     confirm_password: formData.get("confirm_password"),
   };
-  const result = formSchema.safeParse(data);
+  const result = await formSchema.safeParseAsync(data);
   if (!result.success) {
     return result.error.flatten();
   } else {
-    console.log(result.data);
+    //hash password
+    //sane the user to db
+    //log the user in
+    //redirect "/home"
   }
 }
