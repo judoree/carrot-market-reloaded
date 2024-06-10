@@ -4,6 +4,8 @@ import bcrypt, { compareSync } from "bcrypt";
 import db from "@/lib/db";
 import { cookies } from "next/headers";
 import { z } from "zod";
+import { getIronSession } from "iron-session";
+import { redirect } from "next/navigation";
 
 function checkUsername(username: string) {
   return !username.includes("potato");
@@ -83,7 +85,15 @@ export async function createAccount(prevState: any, formData: FormData) {
     });
     console.log(user);
     //sane the user to db
-    //log the user in
-    //redirect "/home"
+    const cookie = await getIronSession(cookies(), {
+      cookieName: "delicious-karrot",
+      password: process.env.COOKIE_PASSWORD!,
+    });
+
+    //@ts-ignore
+    cookie.id = user.id;
+    await cookie.save();
+
+    redirect("/profile");
   }
 }
