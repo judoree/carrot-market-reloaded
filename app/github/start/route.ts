@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 export function GET() {
   const basewURL = "https://github.com/login/oauth/authorize";
   const params = {
@@ -7,5 +9,5 @@ export function GET() {
   };
   const formattedPaarams = new URLSearchParams(params).toString();
   const finalUrl = `${basewURL}?${formattedPaarams}`;
-  return Response.redirect(finalUrl);
+  return redirect(finalUrl);
 }
