@@ -5,9 +5,10 @@ import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get("code");
-  if (!code) {
-    return notFound();
-  }
+  if (!code)
+    return new Response(null, {
+      status: 400,
+    });
   const accessTokenParams = new URLSearchParams({
     client_id: process.env.GITHUB_CLIENT_ID!,
     client_secret: process.env.GITHUB_CLIENT_SECRET!,
